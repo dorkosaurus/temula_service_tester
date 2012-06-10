@@ -18,23 +18,31 @@ public class ServiceTester extends HttpServlet{
 	static final Logger logger = Logger.getLogger(ServiceTester.class.getName());
 	ResourceBundle bundle = ResourceBundle.getBundle("servicetester");
 	public void doGet(HttpServletRequest req, HttpServletResponse resp){ 
-		try{	
-			resp.getOutputStream().write(new String("started...").getBytes());
-			resp.flushBuffer();
 			long sleepTime = Long.parseLong((String)bundle.getObject("sleeptimemillis"));
-		
-			
-			while(true){
-				testServices();
-				logger.info("sleeping for "+sleepTime+" millis");
+			testServices();
+			logger.info("sleeping for "+sleepTime+" millis");
+			try {
 				Thread.sleep(sleepTime);
+				String testerService = (String)bundle.getObject("testerservice");
+				URL url = new URL(testerService);
+				HttpURLConnection conn = (HttpURLConnection) this.getConnection(url);
+				conn.setRequestMethod("GET");
+				conn.setRequestProperty("Accept", "text/plain");
+				conn.getInputStream();
+				conn.disconnect();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
 	}
+	
+	
 	boolean testServices(){
 			logger.info("waking up...");
 			boolean ret=true;

@@ -57,13 +57,19 @@ public class ServiceTester extends HttpServlet{
 					URL url = new URL(serviceURL);
 					HttpURLConnection conn = (HttpURLConnection) this.getConnection(url);
 					conn.setRequestMethod("GET");
-					conn.setRequestProperty("Accept", "text/plain");
+					conn.setRequestProperty("Accept", "text/html");
 					BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-					String output;
-					logger.info("Output from Server .... \n");
-					while ((output = br.readLine()) != null) {
-						logger.info(output);
+					String output = br.readLine();
+					StringBuffer buff = new StringBuffer("");
+					logger.info("First 10 lines returned from server...");
+					int i=0;
+					while(output!=null && i<10){
+						buff.append(output);
+						output = br.readLine();
+						i++;
 					}
+					logger.info(buff.toString());
+					br.close();
 				}
 				catch(Exception e){
 					logger.severe("problem with service "+serviceName+": "+ e.getMessage());
